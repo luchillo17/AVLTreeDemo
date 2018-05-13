@@ -28,6 +28,14 @@ export class AVLTree {
     this.addRecursive(current, val);
   }
 
+  recalculateTreeHeights(root: AVLNode) {
+    throw new Error('Not yet implemented');
+  }
+
+  recalculateAncestorHeights(node: AVLNode) {
+    throw new Error('Not yet implemented');
+  }
+
   serialize(): string {
     return `(${this.serializeRecursive(this.root)})`;
   }
