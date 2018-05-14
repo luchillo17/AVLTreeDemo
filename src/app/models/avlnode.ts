@@ -1,5 +1,5 @@
 export class AVLNode {
-  height = 0;
+  height = 1;
 
   left: AVLNode = null;
   right: AVLNode = null;

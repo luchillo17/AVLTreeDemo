@@ -15,9 +15,9 @@ describe('AVLNode', () => {
     expect(node.value).toBe('x');
     expect(node.left).toBeNull();
     expect(node.right).toBeNull();
-    expect(node.height).toBe(0);
+    expect(node.height).toBe(1);
 
-    for (let i = 0; i < 3; i++) {
+    for (let i = 2; i < 5; i++) {
       node.height = i;
       expect(node.height).toBe(i);
     }

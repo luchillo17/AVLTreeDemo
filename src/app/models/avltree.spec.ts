@@ -14,14 +14,20 @@ describe('AVLTree', () => {
 
     beforeAll(() => {
       tree.root = new AVLNode('d');
+      tree.root.height = 4;
 
       const c = (tree.root.left = new AVLNode('c'));
+      c.height = 3;
       const a = (c.left = new AVLNode('a'));
+      a.height = 2;
       a.right = new AVLNode('b');
 
       const h = (tree.root.right = new AVLNode('h'));
+      h.height = 3;
       const f = (h.left = new AVLNode('f'));
+      f.height = 2;
       const p = (h.right = new AVLNode('p'));
+      p.height = 2;
 
       f.left = new AVLNode('e');
       f.right = new AVLNode('g');
@@ -47,12 +53,16 @@ describe('AVLTree', () => {
 
     it('should add 1 item to empty tree', () => {
       tree.add('d');
+      expect(tree.root.height).toBe(1);
       expect(tree.serialize()).toBe('(d)');
     });
 
     it('should add unordered parameters in alphabetic order', () => {
       ['d', 'h', 'c'].forEach(char => tree.add(char));
 
+      expect(tree.root.height).toBe(2);
+      expect(tree.root.left.height).toBe(1);
+      expect(tree.root.right.height).toBe(1);
       expect(tree.serialize()).toBe('(d(c,h))');
     });
   });
