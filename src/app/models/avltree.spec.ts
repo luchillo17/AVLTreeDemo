@@ -10,29 +10,27 @@ describe('AVLTree', () => {
 
   describe('Serialize & de-serialize', () => {
     const tree = new AVLTree();
-    const serializedTree = '(d(c(a(b)),h(f(e,g),p(i))))';
+    const serializedTree = '(e(c(a,d),g(f,i(h,p))))';
 
     beforeAll(() => {
-      tree.root = new AVLNode('d');
+      tree.root = new AVLNode('e');
       tree.root.height = 4;
 
       const c = (tree.root.left = new AVLNode('c'));
-      c.height = 3;
+      c.height = 2;
       const a = (c.left = new AVLNode('a'));
-      a.height = 2;
-      a.right = new AVLNode('b');
+      a.height = 1;
+      const d = (c.right = new AVLNode('d'));
 
-      const h = (tree.root.right = new AVLNode('h'));
+      const h = (tree.root.right = new AVLNode('g'));
       h.height = 3;
-      const f = (h.left = new AVLNode('f'));
-      f.height = 2;
-      const p = (h.right = new AVLNode('p'));
+      const g = (h.left = new AVLNode('f'));
+      g.height = 1;
+      const p = (h.right = new AVLNode('i'));
       p.height = 2;
 
-      f.left = new AVLNode('e');
-      f.right = new AVLNode('g');
-
-      p.left = new AVLNode('i');
+      p.left = new AVLNode('h');
+      p.right = new AVLNode('p');
     });
 
     it('should serialize a tree correctly', () => {
@@ -185,22 +183,6 @@ describe('AVLTree', () => {
         tree.add('d');
         expect(tree.serialize()).toBe('(c(b(a),e(d,f)))');
       });
-    });
-
-    it('should do rotation right at nested tree', () => {
-      pending();
-    });
-
-    it('should do rotation left at nested tree', () => {
-      pending();
-    });
-
-    it('should do double rotation right at nested tree', () => {
-      pending();
-    });
-
-    it('should do double rotation left at nested tree', () => {
-      pending();
     });
   });
 });

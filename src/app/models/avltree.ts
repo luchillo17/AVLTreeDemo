@@ -47,6 +47,7 @@ export class AVLTree {
     // Double right rotation (better described as left->right rotation),
     // value inserted to the right of the left node
     if (balance > 1 && val > root.left.value) {
+      return this.rotateLeftRight(root);
     }
 
     // Left rotation, value inserted to the right of the right node
@@ -56,6 +57,7 @@ export class AVLTree {
     // Double left rotation (better described as right->left rotation),
     // value inserted to the left of the left node
     if (balance < -1 && val < root.right.value) {
+      return this.rotateRightLeft(root);
     }
 
     // No balance happened, return the same root.
@@ -88,6 +90,16 @@ export class AVLTree {
     root.height = this.getHeightBalance(root).height;
     pivot.height = this.getHeightBalance(pivot).height;
     return pivot;
+  }
+
+  rotateLeftRight(root: AVLNode) {
+    root.left = this.rotateLeft(root.left);
+    return this.rotateRight(root);
+  }
+
+  rotateRightLeft(root: AVLNode) {
+    root.right = this.rotateRight(root.right);
+    return this.rotateLeft(root);
   }
 
   getHeightBalance(root: AVLNode) {
