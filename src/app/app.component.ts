@@ -1,5 +1,5 @@
 import { AfterViewInit, Component } from '@angular/core';
-import { hierarchy, HierarchyPointLink, HierarchyPointNode, select, path, tree } from 'd3';
+import { curveNatural, hierarchy, HierarchyPointLink, HierarchyPointNode, line, select, Selection, tree } from 'd3';
 
 import { AVLNode } from './models/avlnode';
 import { AVLTree } from './models/avltree';
@@ -11,7 +11,16 @@ import { AVLTree } from './models/avltree';
 })
 export class AppComponent implements AfterViewInit {
   public tree = new AVLTree().deSerialize('(e(c(a,d),g(f,i(h,p))))');
+
+  public treeSVG: Selection<SVGElement, HierarchyPointNode<AVLNode>, HTMLElement, any>;
+  public lineGen = line<HierarchyPointNode<AVLNode>>()
+    .curve(curveNatural)
+    .x(d => d.x)
+    .y(d => d.y);
+
   ngAfterViewInit() {
+    this.treeSVG = select('#treeSVG');
+
     // Transform data to D3 tree hierarchy
     const d3Tree = hierarchy(this.tree.root, node => {
       return [node.left, node.right].filter(child => child !== null);
@@ -22,15 +31,13 @@ export class AppComponent implements AfterViewInit {
     const treeLayout = tree<AVLNode>().size([xSize, ySize]);
 
     // Set svg sizes
-    const treeSVG = select('#treeSVG')
-      .attr('viewBox', `-30 -30 ${xSize + 30} ${ySize + 60}`)
-      .style('border', '1px solid black');
+    this.treeSVG.attr('viewBox', `-30 -30 ${xSize + 30} ${ySize + 60}`);
 
     // Generate tree layout
     const nodes = treeLayout(d3Tree);
 
     // Populate nodes with data
-    const nodeGroups = treeSVG
+    const nodeGroups = this.treeSVG
       .selectAll('g.node')
       .data(nodes.descendants(), (d: HierarchyPointNode<AVLNode>) => d.data.value);
 
@@ -49,17 +56,14 @@ export class AppComponent implements AfterViewInit {
       .text(d => d.data.value);
 
     // Populate Links elements
-    const links = treeSVG
-      .selectAll('line.link')
+    const links = this.treeSVG
+      .selectAll('path.link')
       .data(nodes.links(), (d: HierarchyPointLink<AVLNode>) => d.target.data.value);
 
     links
       .enter()
-      .insert('line', 'g')
+      .insert('path', 'g')
       .classed('link', true)
-      .attr('x1', d => d.source.x)
-      .attr('y1', d => d.source.y)
-      .attr('x2', d => d.target.x)
-      .attr('y2', d => d.target.y);
+      .attr('d', (d: HierarchyPointLink<AVLNode>) => this.lineGen([d.source, d.target]));
   }
 }
