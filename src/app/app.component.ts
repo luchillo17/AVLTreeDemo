@@ -4,6 +4,10 @@ import { curveNatural, hierarchy, HierarchyPointLink, HierarchyPointNode, line, 
 import { AVLNode } from './models/avlnode';
 import { AVLTree } from './models/avltree';
 
+type SVGSelection = Selection<SVGElement, HierarchyPointNode<AVLNode>, HTMLElement, any>;
+type NodeSelection = Selection<SVGElement, HierarchyPointNode<AVLNode>, SVGElement, any>;
+type LinkSelection = Selection<SVGElement, HierarchyPointLink<AVLNode>, SVGElement, any>;
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -12,7 +16,7 @@ import { AVLTree } from './models/avltree';
 export class AppComponent implements AfterViewInit {
   public tree = new AVLTree().deSerialize('(e(c(a,d),g(f,i(h,p))))');
 
-  public treeSVG: Selection<SVGElement, HierarchyPointNode<AVLNode>, HTMLElement, any>;
+  public treeSVG: SVGSelection;
   public lineGen = line<HierarchyPointNode<AVLNode>>()
     .curve(curveNatural)
     .x(d => d.x)
@@ -20,7 +24,12 @@ export class AppComponent implements AfterViewInit {
 
   ngAfterViewInit() {
     this.treeSVG = select('#treeSVG');
+    this.updateTree();
+    this.tree.add('q');
+    this.updateTree();
+  }
 
+  updateTree() {
     // Transform data to D3 tree hierarchy
     const d3Tree = hierarchy(this.tree.root, node => {
       return [node.left, node.right].filter(child => child !== null);
@@ -41,7 +50,18 @@ export class AppComponent implements AfterViewInit {
       .selectAll('g.node')
       .data(nodes.descendants(), (d: HierarchyPointNode<AVLNode>) => d.data.value);
 
-    // Configure group content (g, circle, text, link)
+    this.updateNodes(nodeGroups as NodeSelection);
+
+    // Populate Links elements
+    const links = this.treeSVG
+      .selectAll('path.link')
+      .data(nodes.links(), (d: HierarchyPointLink<AVLNode>) => d.target.data.value);
+
+    this.updateLinks(links as LinkSelection);
+  }
+
+  updateNodes(nodeGroups: NodeSelection) {
+    // Insert new nodes (g, circle, text)
     const nodeGroupEnter = nodeGroups
       .enter()
       .append('g')
@@ -55,15 +75,41 @@ export class AppComponent implements AfterViewInit {
       .attr('y', 5)
       .text(d => d.data.value);
 
-    // Populate Links elements
-    const links = this.treeSVG
-      .selectAll('path.link')
-      .data(nodes.links(), (d: HierarchyPointLink<AVLNode>) => d.target.data.value);
+    // Update position for existing ones
+    nodeGroups
+      .transition()
+      .duration(1000)
+      .attr('transform', d => `translate(${d.x}, ${d.y})`);
 
+    // Remove nodes deleted from tree
+    nodeGroups
+      .exit()
+      .transition()
+      .duration(1000)
+      .attr('opacity', 0)
+      .remove();
+  }
+
+  updateLinks(links: LinkSelection) {
+    // Insert new links
     links
       .enter()
       .insert('path', 'g')
       .classed('link', true)
       .attr('d', (d: HierarchyPointLink<AVLNode>) => this.lineGen([d.source, d.target]));
+
+    // Update paths for existing links
+    links
+      .transition()
+      .duration(1000)
+      .attr('d', (d: HierarchyPointLink<AVLNode>) => this.lineGen([d.source, d.target]));
+
+    // Remove links of deleted nodes from tree
+    links
+      .exit()
+      .transition()
+      .duration(1000)
+      .attr('opacity', 0)
+      .remove();
   }
 }
