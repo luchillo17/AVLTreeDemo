@@ -51,6 +51,7 @@ export class AppComponent implements AfterViewInit {
     if (!input.value) {
       return;
     }
+    input.value = '';
   }
 
   updateTree() {
