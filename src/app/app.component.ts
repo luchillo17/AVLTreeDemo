@@ -51,6 +51,16 @@ export class AppComponent implements AfterViewInit {
     if (!input.value) {
       return;
     }
+    const nodeCircle = this.treeSVG
+      .selectAll('g.node')
+      .filter((d: HierarchyPointNode<AVLNode>) => d.data.value === input.value)
+      .select('circle')
+      .style('fill', 'greenyellow');
+
+    setTimeout(() => {
+      nodeCircle.style('fill', null);
+    }, 2500);
+
     input.value = '';
   }
 
