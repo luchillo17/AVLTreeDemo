@@ -29,6 +29,30 @@ export class AppComponent implements AfterViewInit {
     this.updateTree();
   }
 
+  addKey(input: HTMLInputElement) {
+    if (!input.value) {
+      return;
+    }
+    this.tree.add(input.value);
+    input.value = '';
+    this.updateTree();
+  }
+
+  removeKey(input: HTMLInputElement) {
+    if (!input.value) {
+      return;
+    }
+    this.tree.remove(input.value);
+    input.value = '';
+    this.updateTree();
+  }
+
+  findKey(input: HTMLInputElement) {
+    if (!input.value) {
+      return;
+    }
+  }
+
   updateTree() {
     // Transform data to D3 tree hierarchy
     const d3Tree = hierarchy(this.tree.root, node => {
@@ -79,7 +103,9 @@ export class AppComponent implements AfterViewInit {
     nodeGroups
       .transition()
       .duration(1000)
-      .attr('transform', d => `translate(${d.x}, ${d.y})`);
+      .attr('transform', d => `translate(${d.x}, ${d.y})`)
+      .select('text')
+      .text(d => d.data.value);
 
     // Remove nodes deleted from tree
     nodeGroups

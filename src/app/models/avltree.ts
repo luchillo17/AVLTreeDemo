@@ -1,19 +1,37 @@
 import { AVLNode } from './avlnode';
 
 export class AVLTree {
+  nodes = 0;
   root: AVLNode = null;
 
-  add(val: string) {
+  public get height(): number {
+    return this.root.height;
+  }
+
+  /**
+   * Calls the recursive add algorithm
+   *
+   * @param {string} val string to add to tree
+   * @returns {boolean} If the value was inserted returns true, if existed false
+   * @memberof AVLTree
+   */
+  add(val: string): boolean {
+    const startingNodes = this.nodes;
+
     if (this.root === null) {
       this.root = new AVLNode(val);
-      return;
+      return true;
     }
+
     this.root = this.addRecursive(this.root, val);
+
+    return startingNodes < this.nodes;
   }
 
   addRecursive(root: AVLNode, val: string) {
     // Root null means insertion point
     if (root === null) {
+      this.nodes++;
       return new AVLNode(val);
     }
 
@@ -29,38 +47,98 @@ export class AVLTree {
       root.right = this.addRecursive(root.right, val);
     }
 
-    return this.reBalance(root, val);
+    return this.reBalance(root);
   }
 
-  reBalance(root: AVLNode, val: string) {
+  remove(val: string) {
+    const startingNodes = this.nodes;
+
+    if (this.root === null) {
+      return false;
+    }
+
+    this.root = this.removeRecursive(this.root, val);
+
+    return startingNodes > this.nodes;
+  }
+
+  removeRecursive(root: AVLNode, val: string) {
+    // Root null means nothing to delete
+    if (root === null) {
+      return root;
+    }
+
+    // If no same value, just keep searching
+    if (val < root.value) {
+      root.left = this.removeRecursive(root.left, val);
+    } else if (val > root.value) {
+      root.right = this.removeRecursive(root.right, val);
+    } else {
+      /**
+       * Same value then delete like this:
+       * 1. If no child or only one, return said child.
+       * 2. If 2 children, get minimum right successor,
+       *    replace value in root & delete that minimum
+       *    value of right subtree.
+       */
+      if (root.left === null) {
+        this.nodes--;
+        return root.right;
+      }
+      if (root.right === null) {
+        this.nodes--;
+        return root.left;
+      }
+
+      const rightMinNode = this.getMinSuccessor(root.right);
+
+      root.value = rightMinNode.value;
+
+      root.right = this.removeRecursive(root.right, rightMinNode.value);
+    }
+
+    return this.reBalance(root);
+  }
+
+  getMinSuccessor(root: AVLNode) {
+    let current = root;
+
+    while (current.left !== null) {
+      current = current.left;
+    }
+
+    return current;
+  }
+
+  reBalance(root: AVLNode) {
     // Update this ancestor height & get balance
     const { balance, height } = this.getHeightBalance(root);
     root.height = height;
 
     // Check rotation cases based on balance & direction in child of inserted value
 
-    // Right rotation, value inserted to the left of the left node
-    if (balance > 1 && val < root.left.value) {
+    // Right rotation, balance of left node positive means unbalanced to the left
+    if (balance > 1 && this.getHeightBalance(root.left).balance >= 0) {
       return this.rotateRight(root);
     }
 
     // Double right rotation (better described as left->right rotation),
-    // value inserted to the right of the left node
-    if (balance > 1 && val > root.left.value) {
+    // left node unbalanced to the right
+    if (balance > 1 && this.getHeightBalance(root.left).balance < 0) {
       return this.rotateLeftRight(root);
     }
 
-    // Left rotation, value inserted to the right of the right node
-    if (balance < -1 && val > root.right.value) {
+    // Left rotation, balance of the right node 0 or lower means unbalanced to the right
+    if (balance < -1 && this.getHeightBalance(root.right).balance <= 0) {
       return this.rotateLeft(root);
     }
     // Double left rotation (better described as right->left rotation),
-    // value inserted to the left of the left node
-    if (balance < -1 && val < root.right.value) {
+    // right node unbalanced to the left
+    if (balance < -1 && this.getHeightBalance(root.right).balance > 0) {
       return this.rotateRightLeft(root);
     }
 
-    // No balance happened, return the same root.
+    // No balance happened, return same root.
     return root;
   }
 

@@ -1,4 +1,35 @@
-<div id='title'>
+<mat-toolbar id='title'>
   AVLTreeDemo
+</mat-toolbar>
+
+<mat-divider></mat-divider>
+
+<div id='cardContainer'>
+
+  <mat-card id='treeCard'>
+    <svg id='treeSVG'></svg>
+  </mat-card>
+
+  <mat-card id='controlsCard'>
+
+    <div id='crudControls'>
+      <mat-form-field>
+        <input matInput
+          #crudInput
+          maxlength='1'
+          placeholder="Data for CRUD"
+          type='string'>
+      </mat-form-field>
+
+      <button mat-raised-button
+        color='primary'
+        (click)='addKey(crudInput)'>Add key</button>
+      <button mat-raised-button
+        color='primary'
+        (click)='removeKey(crudInput)'>Remove key</button>
+      <button mat-raised-button
+        color='primary'
+        (click)='findKey(crudInput)'>Find key</button>
+    </div>
+  </mat-card>
 </div>
-<svg id='treeSVG'></svg>

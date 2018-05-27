@@ -1,5 +1,12 @@
 import { NgModule } from '@angular/core';
-import { MatCardModule, MatDividerModule, MatToolbarModule } from '@angular/material';
+import {
+  MatButtonModule,
+  MatCardModule,
+  MatDividerModule,
+  MatFormFieldModule,
+  MatInputModule,
+  MatToolbarModule,
+} from '@angular/material';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
@@ -12,8 +19,11 @@ import { AppComponent } from './app.component';
     BrowserAnimationsModule,
 
     // Material modules
+    MatButtonModule,
     MatCardModule,
     MatDividerModule,
+    MatFormFieldModule,
+    MatInputModule,
     MatToolbarModule,
   ],
   providers: [],
