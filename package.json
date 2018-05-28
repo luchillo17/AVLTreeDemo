@@ -10,8 +10,7 @@
     "test:ci": "jest --runInBand",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "package":
-      "electron-packager dist/AVLTreeDemo AVLTreeDemo --asar --all --overwrite --out package && for i in package/*; do zip -r \"${i%/}.zip\" \"$i\"; done",
+    "package": "electron-packager dist/AVLTreeDemo AVLTreeDemo --asar --all --overwrite --out package && for i in package/*; do zip -r \"${i%/}.zip\" \"$i\"; done",
     "deploy": "yarn build && yarn package"
   },
   "private": true,
@@ -46,6 +45,8 @@
     "@types/lodash": "^4.14.109",
     "@types/node": "~8.9.4",
     "codelyzer": "~4.2.1",
+    "devtron": "^1.4.0",
+    "electron-debug": "^1.5.0",
     "electron-packager": "^12.1.0",
     "jasmine-core": "~2.99.1",
     "jasmine-spec-reporter": "~4.2.1",

@@ -14,7 +14,7 @@ type LinkSelection = Selection<SVGElement, HierarchyPointLink<AVLNode>, SVGEleme
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss'],
+  styleUrls: [ './app.component.scss' ],
 })
 export class AppComponent implements AfterViewInit {
   public tree = new AVLTree();
@@ -25,7 +25,7 @@ export class AppComponent implements AfterViewInit {
     .x(d => d.x)
     .y(d => d.y);
 
-  constructor(public dialog: MatDialog) {}
+  constructor(public dialog: MatDialog) { }
 
   ngAfterViewInit() {
     this.treeSVG = select('#treeSVG');
@@ -60,7 +60,7 @@ export class AppComponent implements AfterViewInit {
     if (!input.value) {
       return;
     }
-    this.findKeys([input.value]);
+    this.findKeys([ input.value ]);
 
     input.value = '';
   }
@@ -161,12 +161,12 @@ export class AppComponent implements AfterViewInit {
     }
     // Transform data to D3 tree hierarchy
     const d3Tree = hierarchy(this.tree.root, node => {
-      return [node.left, node.right].filter(child => child !== null);
+      return [ node.left, node.right ].filter(child => child !== null);
     });
 
     const xSize = (d3Tree.height + 0.5) ** 2 * 50;
     const ySize = (d3Tree.height + 1) * 50;
-    const treeLayout = tree<AVLNode>().size([xSize, ySize]);
+    const treeLayout = tree<AVLNode>().size([ xSize, ySize ]);
 
     // Set svg sizes
     this.treeSVG.attr('viewBox', `-30 -30 ${xSize + 30} ${ySize + 60}`);
@@ -197,7 +197,7 @@ export class AppComponent implements AfterViewInit {
       .classed('node', true)
       .attr('transform', d => `translate(${d.x}, ${d.y})`);
 
-    nodeGroupEnter.append('circle');
+    nodeGroupEnter.append('circle').attr('r', 20);
     nodeGroupEnter
       .append('text')
       .attr('x', 0)
@@ -227,13 +227,13 @@ export class AppComponent implements AfterViewInit {
       .enter()
       .insert('path', 'g')
       .classed('link', true)
-      .attr('d', (d: HierarchyPointLink<AVLNode>) => this.lineGen([d.source, d.target]));
+      .attr('d', (d: HierarchyPointLink<AVLNode>) => this.lineGen([ d.source, d.target ]));
 
     // Update paths for existing links
     links
       .transition()
       .duration(1000)
-      .attr('d', (d: HierarchyPointLink<AVLNode>) => this.lineGen([d.source, d.target]));
+      .attr('d', (d: HierarchyPointLink<AVLNode>) => this.lineGen([ d.source, d.target ]));
 
     // Remove links of deleted nodes from tree
     links
