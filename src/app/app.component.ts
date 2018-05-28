@@ -1,8 +1,11 @@
 import { AfterViewInit, Component } from '@angular/core';
+import { MatDialog } from '@angular/material';
 import { curveNatural, hierarchy, HierarchyPointLink, HierarchyPointNode, line, select, Selection, tree } from 'd3';
 
+import { MessageDialogComponent } from './message-dialog/message-dialog.component';
 import { AVLNode } from './models/avlnode';
 import { AVLTree } from './models/avltree';
+import { MessageDialogData } from './message-dialog/message-dialog.interfaces';
 
 type SVGSelection = Selection<SVGElement, HierarchyPointNode<AVLNode>, HTMLElement, any>;
 type NodeSelection = Selection<SVGElement, HierarchyPointNode<AVLNode>, SVGElement, any>;
@@ -22,13 +25,14 @@ export class AppComponent implements AfterViewInit {
     .x(d => d.x)
     .y(d => d.y);
 
+  constructor(public dialog: MatDialog) {}
+
   ngAfterViewInit() {
     this.treeSVG = select('#treeSVG');
     this.updateTree();
-    this.tree.add('q');
-    this.updateTree();
   }
 
+  //#region CRUD functions
   addKey(input: HTMLInputElement) {
     if (!input.value) {
       return;
@@ -63,7 +67,43 @@ export class AppComponent implements AfterViewInit {
 
     input.value = '';
   }
+  //#endregion
 
+  //#region Traversal functions
+  showBFSTraversal() {
+    const text = this.tree.traversalBFS();
+    this.dialogWithText({ title: 'BFS Traversal result', text });
+  }
+  showDFSTraversal() {
+    const text = this.tree.traversalDFS();
+    this.dialogWithText({ title: 'DFS Traversal result', text });
+  }
+
+  showInOrderTraversal() {
+    const text = this.tree.inOrder();
+    this.dialogWithText({ title: 'In-Order Traversal Result', text });
+  }
+
+  showPreOrderTraversal() {
+    const text = this.tree.preOrder();
+    this.dialogWithText({ title: 'Pre-Order Traversal Result', text });
+  }
+  showPostOrderTraversal() {
+    const text = this.tree.postOrder();
+    this.dialogWithText({ title: 'Post-Order Traversal result', text });
+  }
+  //#endregion
+
+  dialogWithText({ title = 'Result', text }: MessageDialogData) {
+    this.dialog.open(MessageDialogComponent, {
+      data: {
+        text,
+        title,
+      },
+    });
+  }
+
+  //#region D3 data visualization functions
   updateTree() {
     // Transform data to D3 tree hierarchy
     const d3Tree = hierarchy(this.tree.root, node => {
@@ -149,4 +189,5 @@ export class AppComponent implements AfterViewInit {
       .attr('opacity', 0)
       .remove();
   }
+  //#endregion
 }

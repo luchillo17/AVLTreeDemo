@@ -8,6 +8,7 @@ export class AVLTree {
     return this.root.height;
   }
 
+  //#region CRUD region
   /**
    * Calls the recursive add algorithm
    *
@@ -28,7 +29,7 @@ export class AVLTree {
     return startingNodes < this.nodes;
   }
 
-  addRecursive(root: AVLNode, val: string) {
+  private addRecursive(root: AVLNode, val: string) {
     // Root null means insertion point
     if (root === null) {
       this.nodes++;
@@ -62,7 +63,7 @@ export class AVLTree {
     return startingNodes > this.nodes;
   }
 
-  removeRecursive(root: AVLNode, val: string) {
+  private removeRecursive(root: AVLNode, val: string) {
     // Root null means nothing to delete
     if (root === null) {
       return root;
@@ -100,7 +101,7 @@ export class AVLTree {
     return this.reBalance(root);
   }
 
-  getMinSuccessor(root: AVLNode) {
+  private getMinSuccessor(root: AVLNode) {
     let current = root;
 
     while (current.left !== null) {
@@ -109,8 +110,10 @@ export class AVLTree {
 
     return current;
   }
+  //#endregion
 
-  reBalance(root: AVLNode) {
+  //#region ReBalance functions
+  private reBalance(root: AVLNode) {
     // Update this ancestor height & get balance
     const { balance, height } = this.getHeightBalance(root);
     root.height = height;
@@ -142,7 +145,7 @@ export class AVLTree {
     return root;
   }
 
-  rotateRight(root: AVLNode) {
+  private rotateRight(root: AVLNode) {
     // Pivot for rotation is the left node of root
     const pivot = root.left;
 
@@ -156,7 +159,7 @@ export class AVLTree {
     return pivot;
   }
 
-  rotateLeft(root: AVLNode) {
+  private rotateLeft(root: AVLNode) {
     // Pivot for rotation is the right node of root
     const pivot = root.right;
 
@@ -170,17 +173,17 @@ export class AVLTree {
     return pivot;
   }
 
-  rotateLeftRight(root: AVLNode) {
+  private rotateLeftRight(root: AVLNode) {
     root.left = this.rotateLeft(root.left);
     return this.rotateRight(root);
   }
 
-  rotateRightLeft(root: AVLNode) {
+  private rotateRightLeft(root: AVLNode) {
     root.right = this.rotateRight(root.right);
     return this.rotateLeft(root);
   }
 
-  getHeightBalance(root: AVLNode) {
+  private getHeightBalance(root: AVLNode) {
     const leftHeight = root.left !== null ? root.left.height : 0;
     const rightHeight = root.right !== null ? root.right.height : 0;
     return {
@@ -188,7 +191,9 @@ export class AVLTree {
       balance: leftHeight - rightHeight,
     };
   }
+  // #endregion
 
+  //#region Serialization functions
   serialize(): string {
     return `(${this.serializeRecursive(this.root)})`;
   }
@@ -221,4 +226,66 @@ export class AVLTree {
 
     return this;
   }
+  //#endregion
+
+  //#region Traversal functions
+  preOrder() {
+    return this.preOrderRecursive(this.root);
+  }
+
+  inOrder() {
+    return this.inOrderRecursive(this.root);
+  }
+
+  postOrder() {
+    return this.postOrderRecursive(this.root);
+  }
+
+  preOrderRecursive(root: AVLNode) {
+    if (root === null) {
+      return '';
+    }
+    return [root.value, this.preOrderRecursive(root.left), this.preOrderRecursive(root.right)]
+      .filter(str => str !== '')
+      .join();
+  }
+
+  inOrderRecursive(root: AVLNode) {
+    if (root === null) {
+      return '';
+    }
+    return [this.inOrderRecursive(root.left), root.value, this.inOrderRecursive(root.right)]
+      .filter(str => str !== '')
+      .join();
+  }
+
+  postOrderRecursive(root: AVLNode) {
+    if (root === null) {
+      return '';
+    }
+    return [this.postOrderRecursive(root.left), this.postOrderRecursive(root.right), root.value]
+      .filter(str => str !== '')
+      .join();
+  }
+
+  traversalDFS() {
+    return this.inOrder();
+  }
+
+  traversalBFS() {
+    const queue: AVLNode[] = [];
+    const result: string[] = [];
+    queue.push(this.root);
+
+    while (queue.length > 0) {
+      const current = queue.shift();
+      result.push(current.value);
+
+      const children = [current.left, current.right].filter(node => node !== null);
+      queue.push(...children);
+    }
+
+    return result.join();
+  }
+  // #endregion
 }

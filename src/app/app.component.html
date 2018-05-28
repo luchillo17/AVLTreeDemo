@@ -31,5 +31,24 @@
         color='primary'
         (click)='findKey(crudInput)'>Find key</button>
     </div>
+
+    <div id='printControls'>
+
+      <button mat-raised-button
+        color='primary'
+        (click)='showBFSTraversal()'>BFS Traversal</button>
+      <button mat-raised-button
+        color='primary'
+        (click)='showDFSTraversal()'>DFS Traversal</button>
+      <button mat-raised-button
+        color='primary'
+        (click)='showInOrderTraversal()'>In Order Traversal (DFS)</button>
+      <button mat-raised-button
+        color='primary'
+        (click)='showPreOrderTraversal()'>Pre Order Traversal</button>
+      <button mat-raised-button
+        color='primary'
+        (click)='showPostOrderTraversal()'>Post Order Traversal</button>
+    </div>
   </mat-card>
 </div>
