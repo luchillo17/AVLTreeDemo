@@ -30,6 +30,9 @@
       <button mat-raised-button
         color='primary'
         (click)='findKey(crudInput)'>Find key</button>
+      <button mat-raised-button
+        color='primary'
+        (click)='findAncestors(crudInput)'>Find Ancestors</button>
     </div>
 
     <div id='printControls'>
@@ -49,6 +52,14 @@
       <button mat-raised-button
         color='primary'
         (click)='showPostOrderTraversal()'>Post Order Traversal</button>
+    </div>
+
+    <div id='informationControls'>
+      <div>Height: {{ tree.height }}</div>
+      <div>Nodes: {{ tree.nodes }}</div>
+      <button mat-raised-button
+        color='primary'
+        (click)='checkIsFull()'>Check if Full</button>
     </div>
   </mat-card>
 </div>

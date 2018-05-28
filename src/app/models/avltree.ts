@@ -20,6 +20,7 @@ export class AVLTree {
     const startingNodes = this.nodes;
 
     if (this.root === null) {
+      this.nodes++;
       this.root = new AVLNode(val);
       return true;
     }
@@ -101,6 +102,48 @@ export class AVLTree {
     return this.reBalance(root);
   }
 
+  getAncestors(val: string) {
+    const result: string[] = [];
+    let current = this.root;
+
+    while (current !== null) {
+      result.push(current.value);
+      if (current.value === val) {
+        return result;
+      }
+
+      current = val < current.value ? current.left : current.right;
+    }
+
+    return null;
+  }
+
+  isFull() {
+    return this.isFullRecursive(this.root);
+  }
+
+  isFullRecursive(root: AVLNode) {
+    // If empty, is full
+    if (root === null) {
+      return true;
+    }
+
+    const children = [root.left, root.right].filter(node => node !== null);
+
+    // If leaf, is full
+    if (children.length === 0) {
+      return true;
+    }
+
+    // If both children not null, check for each child
+    if (children.length === 2) {
+      return children.every(node => this.isFullRecursive(node));
+    }
+
+    // Only 1 children, not full
+    return false;
+  }
+
   private getMinSuccessor(root: AVLNode) {
     let current = root;
 
@@ -110,6 +153,7 @@ export class AVLTree {
 
     return current;
   }
+
   //#endregion
 
   //#region ReBalance functions

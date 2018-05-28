@@ -46,26 +46,67 @@ export class AppComponent implements AfterViewInit {
     if (!input.value) {
       return;
     }
-    this.tree.remove(input.value);
+    const val = input.value;
     input.value = '';
-    this.updateTree();
+
+    if (!this.tree.remove(val)) {
+      this.dialogWithText({ title: 'Key not found', text: `The ${val} key not found, could not remove.` });
+    } else {
+      this.updateTree();
+    }
   }
 
   findKey(input: HTMLInputElement) {
     if (!input.value) {
       return;
     }
-    const nodeCircle = this.treeSVG
+    this.findKeys([input.value]);
+
+    input.value = '';
+  }
+
+  findKeys(keys: string[]) {
+    const nodeCircles = this.treeSVG
       .selectAll('g.node')
-      .filter((d: HierarchyPointNode<AVLNode>) => d.data.value === input.value)
+      .filter((d: HierarchyPointNode<AVLNode>) => keys.some(key => d.data.value === key))
       .select('circle')
       .style('fill', 'greenyellow');
 
-    setTimeout(() => {
-      nodeCircle.style('fill', null);
-    }, 2500);
+    if (nodeCircles.size() <= 0) {
+      this.dialogWithText({ title: 'Key(s) not found', text: `The ${keys} key(s) was not found` });
+      return;
+    }
 
+    setTimeout(() => {
+      nodeCircles.style('fill', null);
+    }, 2500);
+  }
+
+  findAncestors(input: HTMLInputElement) {
+    if (!input.value) {
+      return;
+    }
+
+    const val = input.value;
     input.value = '';
+
+    const ancestors = this.tree.getAncestors(val);
+
+    if (ancestors === null) {
+      this.dialogWithText({ title: 'Ancestors not found', text: `The ${val} key was not found` });
+      return;
+    }
+
+    this.findKeys(ancestors);
+  }
+
+  checkIsFull() {
+    const isFull = this.tree.isFull();
+
+    this.dialogWithText({
+      title: 'Is this tree full?',
+      text: `This tree is ${isFull ? '' : 'not '}full.`,
+    });
   }
   //#endregion
 
@@ -93,15 +134,6 @@ export class AppComponent implements AfterViewInit {
     this.dialogWithText({ title: 'Post-Order Traversal result', text });
   }
   //#endregion
-
-  dialogWithText({ title = 'Result', text }: MessageDialogData) {
-    this.dialog.open(MessageDialogComponent, {
-      data: {
-        text,
-        title,
-      },
-    });
-  }
 
   //#region D3 data visualization functions
   updateTree() {
@@ -190,4 +222,10 @@ export class AppComponent implements AfterViewInit {
       .remove();
   }
   //#endregion
+
+  dialogWithText(data: MessageDialogData) {
+    this.dialog.open(MessageDialogComponent, {
+      data,
+    });
+  }
 }
