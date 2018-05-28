@@ -108,6 +108,24 @@ export class AppComponent implements AfterViewInit {
       text: `This tree is ${isFull ? '' : 'not '}full.`,
     });
   }
+
+  checkIsFullComposed() {
+    const isFull = this.tree.isFullComposed();
+
+    this.dialogWithText({
+      title: 'Is this tree full composed (all nodes have either 0 or 2 children)?',
+      text: `This tree is ${isFull ? '' : 'not '}full composed.`,
+    });
+  }
+
+  checkIsComplete() {
+    const isComplete = this.tree.isComplete();
+
+    this.dialogWithText({
+      title: 'Is this tree complete?',
+      text: `This tree is ${isComplete ? '' : 'not '}complete.`,
+    });
+  }
   //#endregion
 
   //#region Traversal functions

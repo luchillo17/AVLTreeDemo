@@ -1,3 +1,5 @@
+import { dropRightWhile } from 'lodash';
+
 import { AVLNode } from './avlnode';
 
 export class AVLTree {
@@ -119,6 +121,10 @@ export class AVLTree {
   }
 
   isFull() {
+    return this.nodes === 2 ** this.height - 1;
+  }
+
+  isFullComposed() {
     return this.isFullRecursive(this.root);
   }
 
@@ -142,6 +148,10 @@ export class AVLTree {
 
     // Only 1 children, not full
     return false;
+  }
+
+  isComplete() {
+    return !this.toArray().some(node => node === null);
   }
 
   private getMinSuccessor(root: AVLNode) {
@@ -270,6 +280,25 @@ export class AVLTree {
 
     return this;
   }
+
+  toArray() {
+    const result: string[] = [];
+    const queue: AVLNode[] = [this.root];
+
+    while (queue.length > 0) {
+      const current = queue.shift();
+
+      if (current === null) {
+        result.push(null);
+        continue;
+      }
+
+      result.push(current.value);
+      queue.push(current.left, current.right);
+    }
+
+    return dropRightWhile(result, key => key === null);
+  }
   //#endregion
 
   //#region Traversal functions
@@ -317,9 +346,8 @@ export class AVLTree {
   }
 
   traversalBFS() {
-    const queue: AVLNode[] = [];
+    const queue: AVLNode[] = [this.root];
     const result: string[] = [];
-    queue.push(this.root);
 
     while (queue.length > 0) {
       const current = queue.shift();
