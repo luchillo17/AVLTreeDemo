@@ -7,7 +7,7 @@ export class AVLTree {
   root: AVLNode = null;
 
   public get height(): number {
-    return this.root.height;
+    return this.root === null ? 0 : this.root.height;
   }
 
   //#region CRUD region

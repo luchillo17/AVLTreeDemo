@@ -17,7 +17,7 @@ type LinkSelection = Selection<SVGElement, HierarchyPointLink<AVLNode>, SVGEleme
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements AfterViewInit {
-  public tree = new AVLTree().deSerialize('(e(c(a,d),g(f,i(h,p))))');
+  public tree = new AVLTree();
 
   public treeSVG: SVGSelection;
   public lineGen = line<HierarchyPointNode<AVLNode>>()
@@ -155,6 +155,10 @@ export class AppComponent implements AfterViewInit {
 
   //#region D3 data visualization functions
   updateTree() {
+    if (this.tree.root === null) {
+      this.treeSVG.attr('viewBox', null);
+      return this.treeSVG.selectAll('*').remove();
+    }
     // Transform data to D3 tree hierarchy
     const d3Tree = hierarchy(this.tree.root, node => {
       return [node.left, node.right].filter(child => child !== null);
