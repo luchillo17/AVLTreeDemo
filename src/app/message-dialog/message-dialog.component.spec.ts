@@ -1,4 +1,5 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatDialogModule } from '@angular/material';
 
 import { MessageDialogComponent } from './message-dialog.component';
 
@@ -8,9 +9,9 @@ describe('MessageDialogComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ MessageDialogComponent ]
-    })
-    .compileComponents();
+      declarations: [MessageDialogComponent],
+      imports: [MatDialogModule],
+    }).compileComponents();
   }));
 
   beforeEach(() => {
