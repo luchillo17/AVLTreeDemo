@@ -15,6 +15,7 @@ describe('AVLTree', () => {
     beforeAll(() => {
       tree.root = new AVLNode('e');
       tree.root.height = 4;
+      tree.nodes = 9;
 
       const c = (tree.root.left = new AVLNode('c'));
       c.height = 2;
